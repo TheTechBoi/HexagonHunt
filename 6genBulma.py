@@ -8,7 +8,9 @@ from networktables import NetworkTables
 #NetworkTables.initialize(server='roborio-6025-frc.local') 
 #table = NetworkTables.getTable("Vision") 
 
-cap = cv2.VideoCapture('altigenn.mp4')
+#cap = cv2.VideoCapture('altigenn.mp4') #video kaydı kullanırken
+
+cap = cv2.VideoCapture(0)
 
 cam_angle = 60
 cam_width = 1280
