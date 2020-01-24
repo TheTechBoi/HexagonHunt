@@ -8,7 +8,7 @@ from networktables import NetworkTables
 #NetworkTables.initialize(server='roborio-6025-frc.local') 
 #table = NetworkTables.getTable("Vision") 
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('altigenn.mp4')
 
 cam_angle = 60
 cam_width = 1280
@@ -27,31 +27,40 @@ x_difference = 0
 angle_difference = 0
 
 #renkler
-lower_color =  np.array([28, 100, 100])
-upper_color =  np.array([48, 255, 255])
+lower_color =  np.array([50, 100, 100])
+upper_color =  np.array([70, 255, 255])
 
 def maxPixel(liste, index):
     number = 0
+    i = 0
     for i in range(len(liste)):
         if number < liste[i][0][index]:
             number = liste[i][0][index]
 
+            
+
     return number
 
 def minPixel(liste, index):
-    number = 0
-    for i in range(len(liste)):
-        if number > liste[i][0][index]:
-            number = liste[i][0][index]
+    b = 0
+    number2 = liste[b][0][index]
+    for b in range(len(liste)):
+        if number2 > liste[b][0][index]:
+            number2 = liste[b][0][index]
+    return number2
 
-    return number
 
+if (cap.isOpened()== False): 
+  print("Error opening video stream or file")
 
-while 1:
+  
+while cap.isOpened():
     _, frame = cap.read()
+    
+
 
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-
+    
     kernel = np.ones((15,15),np.float32)/225
     
     smoothed = cv2.filter2D(hsv,-1,kernel)
@@ -74,16 +83,14 @@ while 1:
     
     #Sınırları belirleme
     cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
-    center = None 
 
     #frame2 = frame.copy()
     #cv2.drawContours(frame2, cnts, -1 ,(0,255,0), 3) 
 
     if len(cnts) > 0:
 
-            
             c = max(cnts,key =cv2.contourArea) #buyuk değerin seçimi
-
+        
             maxX = maxPixel(c,0)
             minX = minPixel(c,0)
             maxY = maxPixel(c,1)
@@ -99,17 +106,18 @@ while 1:
                 print(shapeH)
                 shape_percentage = int((shapeH/shapeW)*100)
 
-                if (hexagon_percentage - 5) <= shape_percentage <= (hexagon_percentage + 5):
+                if (hexagon_percentage - 10) <= shape_percentage <= (hexagon_percentage + 10):
                     hexagonVerification = True
                 else:
                     hexagonVerification = False
 
 
             if hexagonVerification == True:
-                x = minX + int(shapeW/2)
+                x = minX + int(shapeW/2) 
                 y = minY + int(shapeH/2)
                 
                 cv2.circle(frame,(x,y), 6, (255, 0, 0), -1)
+                cv2.circle(res,(x,y), 6, (255, 0, 0), -1)
                 
                 x_difference = cam_center - x
                 angle_difference = 0-(x_difference*ratio)
