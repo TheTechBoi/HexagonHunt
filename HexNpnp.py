@@ -8,7 +8,7 @@ from networktables import NetworkTables
 #NetworkTables.initialize(server='roborio-6025-frc.local') 
 #table = NetworkTables.getTable("Vision") 
 
-cap = cv2.VideoCapture('altigenn.mp4') #video kaydı kullanırken
+cap = cv2.VideoCapture('altigen.mp4') #video kaydı kullanırken
 
 ##cap = cv2.VideoCapture(0)
 
@@ -29,7 +29,7 @@ x_difference = 0
 angle_difference = 0
 
 #renkler
-lower_color =  np.array([50, 100, 100])
+lower_color =  np.array([50, 70, 70])
 upper_color =  np.array([70, 255, 255])
 
 with np.load('ilkCalibre.npz') as X:
@@ -54,32 +54,26 @@ def minPixel(liste, index):
             number2 = liste[b][0][index]
     return number2
 
-def draw(img, corners, imgpts): #kare çizmek istersen aşağıda axis ve drawın yanına 2 yaz
-    imgpts = np.int32(imgpts).reshape(-1,2)
-
-    # draw ground floor in green
-    img = cv2.drawContours(img, [imgpts[:4]],-1,(0,255,0),-3)
-
-    # draw pillars in blue color
-    for i,j in zip(range(4),range(4,8)):
-        img = cv2.line(img, tuple(imgpts[i]), tuple(imgpts[j]),(255),3)
-
-    # draw top layer in red color
-    img = cv2.drawContours(img, [imgpts[4:]],-1,(0,0,255),3)
-
+def draw(img, corners, imgpts):
+    corner = tuple(corners[0].ravel())
+    img = cv2.line(img, corner, tuple(imgpts[0].ravel()), (255,0,0), 5)
+    img = cv2.line(img, corner, tuple(imgpts[1].ravel()), (0,255,0), 5)
+    img = cv2.line(img, corner, tuple(imgpts[2].ravel()), (0,0,255), 5)
     return img
 
-axis = np.float32([[0,0,0], [0,3,0], [3,3,0], [3,0,0],
-                   [0,0,-3],[0,3,-3],[3,3,-3],[3,0,-3] ])
+
 
 
 imgp = np.zeros((2*2,2), np.float32)
 objp = np.zeros((2*2,3), np.float32)
 
-w_LH = (-86,249,0)
-w_LL = (-86,205,0)
-w_RL = (0, 205, 0)
-w_RH = (0, 249, 0)
+axis = np.float32([[5,0,0], [0,5,0], [0,0,-5],[0,0,0]]).reshape(-1,3)
+
+
+w_LH = (-10,5,0)
+w_LL = (-10,0,0)
+w_RL = (0, 0, 0)
+w_RH = (0, 5, 0)
 
 objp[0] = w_LH
 objp[1] = w_LL
@@ -144,7 +138,7 @@ while cap.isOpened():
                 print(shapeH)
                 shape_percentage = int((shapeH/shapeW)*100)
 
-                if (hexagon_percentage - 10) <= shape_percentage <= (hexagon_percentage + 10):
+                if (hexagon_percentage - 5) <= shape_percentage <= (hexagon_percentage + 5):
                     hexagonVerification = True
                 else:
                     hexagonVerification = False
@@ -183,14 +177,17 @@ while cap.isOpened():
 ##                cv2.circle(frame, leftL, 6, (255, 0, 0), -1)
 
                 _, rvecs, tvecs, inliers = cv2.solvePnPRansac(objp, imgp, mtx, dist)
-                
+
                 imgpts, jac = cv2.projectPoints(axis, rvecs, tvecs, mtx, dist)
-                
+
                 frame = draw(frame,imgp,imgpts)
 
-                print(tvecs)
-                print('\n\n')
+                
                 print(rvecs)
+                print('\n')
+                print(imgpts[1])
+                print('\n')
+                print(tvecs)
                 
             else:
                 x = 0

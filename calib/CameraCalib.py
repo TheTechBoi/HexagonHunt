@@ -9,13 +9,36 @@ import glob
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
 
-chessX = 3
+chessX = 7
 
-chessY = 7
+chessY = 3
 
 # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
 objp = np.zeros((chessX*chessY,3), np.float32)
-objp[:,:2] = np.mgrid[0:chessY,0:chessX].T.reshape(-1,2)
+
+objp[0] = [0, 0, 0]
+objp[1] = [3, 0, 0]
+objp[2] = [6, 0, 0]
+objp[3] = [9, 0, 0]
+objp[4] = [12, 0, 0]
+objp[5] = [15, 0, 0]
+objp[6] = [18, 0, 0]
+objp[7] = [0, 3, 0]
+objp[8] = [3, 3, 0]
+objp[9] = [6, 3, 0]
+objp[10] = [9, 3, 0]
+objp[11] = [12, 3, 0]
+objp[12] = [15, 3, 0]
+objp[13] = [18, 3, 0]
+objp[14] = [0, 6, 0]
+objp[15] = [3, 6, 0]
+objp[16] = [6, 6, 0]
+objp[17] = [9, 6, 0]
+objp[18] = [12, 6, 0]
+objp[19] = [15, 6, 0]
+objp[20] = [18, 6, 0]
+
+        
 
 # Arrays to store object points and image points from all the images.
 objpoints = [] # 3d point in real world space
